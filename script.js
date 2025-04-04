@@ -40,9 +40,81 @@ function createBoard(columns) {
     });
     // Добавление кнопки "Рестарт" в игровое поле
     gameBoard.append(restartBtn);
-  };
-function createCard(){
+    const massiv = []
+    array.forEach((icons) => {
+        massiv.push(icons, icons);
+      });
+
+};
+const icons = shuffleArray(count);
+function createCard(flippedIcon) {
     const cardTemplatee = document.querySelector('#cardTemplate').cloneNode(true).content;
     const gameCard = cardTemplatee.querySelector('.card');
+    const flippedIconElement = gameCard.querySelector('#flippedIcon');
+    
+    flippedIconElement.classList.add(`fa-${flippedIcon}`);
+    
     return gameCard;
+}
+
+function createIconsArray(initialCount){
+    const cardsIcons = [
+        "compass",
+        "cloud",
+        "play",
+        "bolt",
+        "stop",
+        "cogs",
+        "atom",
+        "basketball-ball",
+        "arrows",
+        "angle-left",
+        "bars",
+        "file",
+        "filter",
+        "gear",
+        "folder",
+        "folder-open",
+        "shield",
+        "scissors",
+        "pen-clip"
+    ];
+    const selectedIcons = cardsIcons.slice(0, initialCount/2);
+doubleCards = duplicateElements(cards);
+return shuffleArray(doubleCards);
+
+};
+icons.forEach((icon) => {
+    gameTable.append(createCard(icon));
+  });
+function dublicateElements(array){
+    const massiv = []
+    array.forEach((item) => {
+        massiv.push(item, item);
+      });    
+return massiv;
+}
+// Перемешивание элементов массива
+function shuffleArray(array) {
+    // Определяем количество элементов массива
+    let currentIndex = array.length;
+  
+    // Повторяем до тех пор, пока текущий индекс не достиг нуля
+    while (currentIndex !== 0) {
+      // Отнимаем индекс
+      currentIndex = currentIndex-1;
+      // Генерируем рандомный индекс
+      const randomIndex = Math.floor(Math.random() * currentIndex);
+  
+      // Сохраняем элемент текущего индекса
+      const temp = array[currentIndex];
+      // По текущему индексу размещаем элемент по случайному индексу
+      array[currentIndex] = array[randomIndex];
+      // А на место элемента по случайному индексу ставим сохраненный элемент бывшего текущего индекса
+      array[randomIndex] = temp;
+    };
+  
+    // Возвращаем измененный массив
+    return array;
+
 }
