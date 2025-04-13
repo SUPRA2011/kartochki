@@ -8,6 +8,13 @@
     <title>Карточки</title>
 </head>
 <body>
+    <div class = "state">
+        <h1 class = "state__title">Пары</h1>
+        <p class = "state__moves">Шаги: 0 шагов</p>
+        <p></p> 
+        
+    </div>
+
     <div class="board" id="gameBoard">
         <h2 class="board__title">Настроить количество карточек (от 2 до 6)</h2>
         <form class="board__form">
@@ -22,8 +29,8 @@
     </template>
 <template id="cardTemplate">
     <div class="card">
-        <i class="flpped-icon fa" id="flipped-icon">display: block;</i>
-        <i class="default-icon fa fa-question-circle">display: none;</i>
+        <i class="flpped-icon fa" id="flipped-icon"></i>
+        <i class="default-icon fa fa-question-circle"></i>
     </div>
 </template>
 

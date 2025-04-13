@@ -6,7 +6,13 @@
 
 body {
   font-family: Verdana, sans-serif;
+  background-image: url(Фон.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: purple;
 }
+
 
 /* Обертка всего контента игры */
 .content {
@@ -81,3 +87,13 @@ body {
 /* Состояние наведения курсора мыши на кнопку */
 .board__button:hover{
   color: rgba(181, 13, 181, 0.7);}
+.card.successfully {
+  background: #992626;
+  transform: scale(0.95);
+}
+.flipped-icon{
+  pointer-events: none;
+}
+.default-icon{
+  pointer-events: none;
+}

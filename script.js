@@ -1,7 +1,23 @@
 const gameBoard = document.querySelector("#gameBoard");
 const startButton = document.querySelector('.board__button');
 const input = document.querySelector('.board__input');
+const couple = {first:null,second:null,firstClickable:true,secondClickable:true}
+let totalTime  = 60
+let totalFlips = 0
+let intervalId = 0
+let gameActive = false;
 
+function startTimer(){
+  stTime = document.querySelector(".state__time");
+  stMoves = document.querySelector(".state__moves");
+  totalTime = totalTime-1
+  stTime.textContent = "Время:${totalTime}сек";
+  stMoves.textContent = "Шаги: ${totalFlips}";
+  
+intervalId = setInterval(() => {}, 1000) // функция, которая постоянно выполняет другую функцию с интервалом в 1 секунду
+clearInterval(intervalId) // останавливает вызов функции с интервалом
+if (totalTime===0) return;
+}
 startButton.addEventListener("click", (event) => {
     event.preventDefault();
     
@@ -15,7 +31,8 @@ startButton.addEventListener("click", (event) => {
 });
 
 function createBoard(columns) {
-    gameBoard.textContent = "";
+  
+  gameBoard.textContent = "";
   
     // Создание клона шаблона
     const template = document.querySelector('#gameTableTemplate').cloneNode(true).content;
@@ -44,19 +61,18 @@ function createBoard(columns) {
     array.forEach((icons) => {
         massiv.push(icons, icons);
       });
-
+    startTimer()
 };
 const icons = shuffleArray(count);
 function createCard(flippedIcon) {
     const cardTemplatee = document.querySelector('#cardTemplate').cloneNode(true).content;
     const gameCard = cardTemplatee.querySelector('.card');
     const flippedIconElement = gameCard.querySelector('#flippedIcon');
-    
+    card.addEventListener("click",() => gameLogic(card));
     flippedIconElement.classList.add(`fa-${flippedIcon}`);
     
     return gameCard;
 }
-
 function createIconsArray(initialCount){
     const cardsIcons = [
         "compass",
@@ -118,3 +134,66 @@ function shuffleArray(array) {
     return array;
 
 }
+function gameLogic(card) {
+    // Если обе карточки не кликабельны, ничего не делаем
+    if (!couple.firstClickable && !couple.secondClickable) return;
+  
+    // Переворачиваем карточку
+    card.classList.add('flip');
+  totalFlips = totalFlips + 1;
+    // Проверяем, кликнута ли первая карточка
+    if (couple.first === null) {
+      // Если нет, то сохраняем на нее ссылку и считаем кликнутой
+      couple.first = card;
+      couple.firstClickable = false;
+    } else if (couple.second === card && couple.first !== card) {
+      // Если да, то проверяем, кликнута ли вторая карточка и не является ли вторая карточка той же самой карточкой, что и первая, и если нет, то сохраняем ссылку на эту карточку и считаем ее кликнутой
+      couple.second = card;
+      couple.secondClickable = true;
+    }
+  
+    // Если какой-либо карточки не кликнуто, ничего не делаем
+    if (couple.first === null || couple.second === null) return;
+  
+    // Сравниваем классы двух карточек и сохраняем логический результат в переменную (это для повышения читабельности)
+    const isEqual = couple.first.firstElementChild.classList[2] === couple.second.firstElementChild.classList[2];
+  
+    // Если классы одинаковы
+    if (isEqual) {
+      setTimeout(() => {
+        // То перекрашиваем их в зеленый с задержкой в 1 секунду
+        couple.first.classList.add('successfully');
+        couple.second.cassList.add('successfully');
+  
+        // Сбрасываем все ссылки и состояния
+        refresh();
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        // Иначе переворачиваем карточки обратно с задержкой в 1 секунду
+        couple.first.classList.remove('flip');
+        couple.second.classList.remove('flip');
+  
+        // Сбрасываем все ссылки и состояния
+        refresh();
+      }, 1000);
+    }
+  
+    // Функция сброса ссылок и состояний
+    function refresh() {
+      couple.first = null;
+      couple.second = null;
+      couple.firstClickable = true;
+      couple.secondClickable = true;
+    }
+      isWin();
+  }
+  function isWin() {
+    const gameTable = document.querySelector('.table');
+    if (Array.from(gameTable.children).every((card) => card.classList.contains('flip'))) {
+      setTimeout(() => {
+        clearInterval(intervalId);
+        alert("You Win");
+      }, 2000)
+    }
+  }
