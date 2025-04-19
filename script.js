@@ -5,32 +5,35 @@ const couple = {first:null,second:null,firstClickable:true,secondClickable:true}
 let totalTime  = 60
 let totalFlips = 0
 let intervalId = 0
-let gameActive = false;
 
 function startTimer(){
-  stTime = document.querySelector(".state__time");
-  stMoves = document.querySelector(".state__moves");
+  const stTime = document.querySelector(".state__time");
+  const stMoves = document.querySelector(".state__moves");
+
+intervalId = setInterval(() => {
   totalTime = totalTime-1
-  stTime.textContent = "Время:${totalTime}сек";
-  stMoves.textContent = "Шаги: ${totalFlips}";
-  
-intervalId = setInterval(() => {}, 1000) // функция, которая постоянно выполняет другую функцию с интервалом в 1 секунду
-clearInterval(intervalId) // останавливает вызов функции с интервалом
-if (totalTime===0) return;
+  stTime.textContent = `Время:${totalTime}сек`;
+  stMoves.textContent = `Шаги: ${totalFlips}`;
+  if (totalTime===0) {
+    clearInterval(intervalId) // останавливает вызов функции с интервалом
+  }
+}, 1000) // функция, которая постоянно выполняет другую функцию с интервалом в 1 секунду
+
 }
 startButton.addEventListener("click", (event) => {
     event.preventDefault();
-    
+    let count;
     let columns = parseInt(input.value);
     if (columns >= 2 && columns <= 6 && columns % 2 === 0) {
         count = columns*columns;
-        createBoard(columns, count);
     } else {
         alert("Пожалуйста, введите четное число от 2 до 6.");
+        return;
     }
+    createBoard(columns, count);
 });
 
-function createBoard(columns) {
+function createBoard(columns, count) {
   
   gameBoard.textContent = "";
   
@@ -41,6 +44,14 @@ function createBoard(columns) {
     // В шаблоне находится кнопка "Рестарт"
     const restartBtn = template.querySelector(".table__button");
   
+     // Создание определенного количества иконок
+    const icons = createIconsArray(count);
+
+    // Заполнение ячеек карточками
+    icons.forEach((icon) => {
+      gameTable.append(createCard(icon));
+    });
+
     // Добавляются правила для grid-контейнера в зависимости от значения параметра columns
     gameTable.style = `
     grid-template-columns: repeat(${columns}, 1fr);
@@ -57,19 +68,16 @@ function createBoard(columns) {
     });
     // Добавление кнопки "Рестарт" в игровое поле
     gameBoard.append(restartBtn);
-    const massiv = []
-    array.forEach((icons) => {
-        massiv.push(icons, icons);
-      });
-    startTimer()
+
+    startTimer();
 };
-const icons = shuffleArray(count);
+
 function createCard(flippedIcon) {
     const cardTemplatee = document.querySelector('#cardTemplate').cloneNode(true).content;
     const gameCard = cardTemplatee.querySelector('.card');
-    const flippedIconElement = gameCard.querySelector('#flippedIcon');
-    card.addEventListener("click",() => gameLogic(card));
-    flippedIconElement.classList.add(`fa-${flippedIcon}`);
+    // Добавление иконки, название которой передаем через параметр flippedIcon
+    gameCard.querySelector('#flippedIcon').classList.add(`fa-${flippedIcon}`);
+    gameCard.addEventListener("click",() => gameLogic(gameCard));
     
     return gameCard;
 }
@@ -95,20 +103,17 @@ function createIconsArray(initialCount){
         "scissors",
         "pen-clip"
     ];
-    const selectedIcons = cardsIcons.slice(0, initialCount/2);
-doubleCards = duplicateElements(cards);
-return shuffleArray(doubleCards);
-
+    let selectedIcons = cardsIcons.slice(0, Math.floor(initialCount/2));
+    const doubleCards = dublicateElements(selectedIcons);
+    return shuffleArray(doubleCards);
 };
-icons.forEach((icon) => {
-    gameTable.append(createCard(icon));
-  });
+
 function dublicateElements(array){
     const massiv = []
     array.forEach((item) => {
         massiv.push(item, item);
       });    
-return massiv;
+    return massiv;
 }
 // Перемешивание элементов массива
 function shuffleArray(array) {
@@ -135,21 +140,23 @@ function shuffleArray(array) {
 
 }
 function gameLogic(card) {
+    // Если время вышло - ничего не делаем
+    if (totalTime === 0) return;
     // Если обе карточки не кликабельны, ничего не делаем
     if (!couple.firstClickable && !couple.secondClickable) return;
   
     // Переворачиваем карточку
     card.classList.add('flip');
-  totalFlips = totalFlips + 1;
+    totalFlips = totalFlips + 1;
     // Проверяем, кликнута ли первая карточка
     if (couple.first === null) {
       // Если нет, то сохраняем на нее ссылку и считаем кликнутой
       couple.first = card;
       couple.firstClickable = false;
-    } else if (couple.second === card && couple.first !== card) {
+    } else if (couple.second === null && couple.first !== card) {
       // Если да, то проверяем, кликнута ли вторая карточка и не является ли вторая карточка той же самой карточкой, что и первая, и если нет, то сохраняем ссылку на эту карточку и считаем ее кликнутой
       couple.second = card;
-      couple.secondClickable = true;
+      couple.secondClickable = false;
     }
   
     // Если какой-либо карточки не кликнуто, ничего не делаем
